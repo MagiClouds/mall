@@ -42,7 +42,7 @@ func NewUserUsecase(repo UserRepo, logger log.Logger) *UserUsecase {
 }
 
 func (uc *UserUsecase) Create(ctx context.Context, g *User) error {
-	return uc.repo.CreateUser(ctx, g)
+	return uc.repo.UserRegister(ctx, g)
 }
 
 func (uc *UserUsecase) Update(ctx context.Context, g *User) error {
