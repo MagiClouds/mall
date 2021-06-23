@@ -1,0 +1,97 @@
+syntax = "proto3";
+
+package api.user.v1;
+
+import "google/api/annotations.proto";
+import public "google/protobuf/timestamp.proto";
+
+option go_package = "mall/api/user/v1;v1";
+option java_multiple_files = true;
+option java_package = "api.user.v1";
+
+service User {
+  rpc UserRegister (UserRegisterRequest) returns (BaseResponse) {
+    option (google.api.http) = {
+      post: "/user/register"
+      body: "*"
+    };
+  };
+  rpc UserLogin (UserLoginRequest) returns (UserLoginResponse) {
+    option (google.api.http) = {
+      post: "/user/login"
+      body: "*"
+    };
+  }
+  rpc UpdateUser (UserInfo) returns (BaseResponse) {
+    option (google.api.http) = {
+      put: "/user"
+      body: "*"
+    };
+  };
+  rpc DeleteUser (DeleteUserRequest) returns (BaseResponse) {
+    option (google.api.http) = {
+      delete: "/user/{id}"
+    };
+  };
+  rpc GetUser (GetUserRequest) returns (UserInfo){
+    option (google.api.http) = {
+      get: "/user/{id}"
+    };
+  };
+  rpc ListUser (ListUserRequest) returns (ListUserResponse){
+    option (google.api.http) = {
+      get: "/user"
+    };
+  };
+}
+
+message ListUserRequest {
+  uint64  last_time = 1;
+  uint32  rn = 2;
+}
+
+message  ListUserResponse {
+  repeated UserInfo user = 1;
+}
+
+message EmptyRequest {}
+
+message  GetUserRequest {
+  int64  id = 1;
+}
+
+message DeleteUserRequest {
+  int64  id = 1;
+}
+
+message BaseResponse {
+  string message = 1;
+}
+
+message UserInfo {
+  int64 id = 1;
+  string user_name = 2;
+  string phone = 4;
+}
+
+message UserRegisterRequest {
+  string user_name = 1;
+  string phone = 3;
+  string pwd = 4;
+}
+
+message UserRegisterResponse {
+  string message = 1;
+}
+
+message UserLoginRequest {
+  string phone = 1;
+  string pwd = 2;
+}
+
+message UserLoginResponse {
+  uint64 id = 1;
+  string name = 2;
+  string token = 3;
+}
+
