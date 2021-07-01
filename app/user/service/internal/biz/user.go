@@ -14,7 +14,7 @@ type UserDto struct {
 }
 
 type UserDo struct {
-	Id    uint64
+	Id    int64
 	Name  string
 	Phone string
 	Pwd   string
@@ -55,13 +55,6 @@ func NewUserUsecase(repo UserRepo, logger log.Logger) *UserUsecase {
 	return &UserUsecase{repo: repo, log: log.NewHelper(logger)}
 }
 
-//UserRegister
-//UserLogin(ct
-//UpdateUser(c
-//DeleteUser(c
-//GetUser(ctx
-//ListUser(ctx
-
 func (uc *UserUsecase) UserRegister(ctx context.Context, u *UserDto) error {
 	user, err := uc.repo.GetByPhone(ctx, u.Phone)
 	if err != nil {
@@ -98,7 +91,7 @@ func (uc *UserUsecase) UserLogin(ctx context.Context, g *UserDto) (*UserLoginBo,
 	return res, nil
 }
 
-func (uc *UserUsecase) UpdateUser (ctx context.Context, u *UserDto) error {
+func (uc *UserUsecase) UpdateUser(ctx context.Context, u *UserDto) error {
 	return uc.repo.Update(ctx, u)
 }
 

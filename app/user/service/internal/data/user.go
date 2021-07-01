@@ -14,7 +14,7 @@ type userRepo struct {
 }
 
 type UserDo struct {
-	Id       int    `gorm:"column:id"`
+	Id       int64  `gorm:"column:id"`
 	Name     string `gorm:"column:name"`
 	Phone    string `gorm:"column:phone"`
 	Password string `gorm:"column:password"`
