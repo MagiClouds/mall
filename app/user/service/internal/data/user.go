@@ -6,17 +6,21 @@ import (
 	"mall/app/user/service/internal/biz"
 )
 
+var _ biz.UserRepo = (*userRepo)(nil)
+
 type userRepo struct {
 	data *Data
 	log  *log.Helper
 }
 
 type UserDo struct {
-	Id       int64  `gorm:"column:id"`
+	Id       int    `gorm:"column:id"`
 	Name     string `gorm:"column:name"`
 	Phone    string `gorm:"column:phone"`
 	Password string `gorm:"column:password"`
 }
+
+const tableUser = "user"
 
 // NewUserRepo .
 func NewUserRepo(data *Data, logger log.Logger) biz.UserRepo {
@@ -26,28 +30,76 @@ func NewUserRepo(data *Data, logger log.Logger) biz.UserRepo {
 	}
 }
 
-func (u userRepo) UserRegister(ctx context.Context, user *biz.User) error {
-	res := u.data.db.WithContext(ctx).Table("user").Create(&UserDo{Name: user.Name,
+func (u userRepo) Save(ctx context.Context, user *biz.UserDto) error {
+	res := u.data.db.WithContext(ctx).Table(tableUser).Create(&UserDo{Name: user.Name,
 		Phone: user.Phone, Password: user.Pwd})
 	return res.Error
 }
 
-func (u userRepo) UserLogin(context.Context, *biz.User) (*biz.UserLoginBo, error) {
-	panic("implement me")
+//db.Table("orders").Select("date(created_at) as date, sum(amount) as total").Group("date(created_at)").Having("sum(amount) > ?", 100).Scan(&results)
+
+func (u userRepo) GetByPhone(ctx context.Context, phone string) (*biz.UserDo, error) {
+	user := new(UserDo)
+	res := u.data.db.WithContext(ctx).Table(tableUser).First(user).Where(
+		&UserDo{Phone: phone})
+
+	if res.Error != nil {
+		return nil, res.Error
+	}
+
+	return translateDataBoToBizBo(user), nil
 }
 
-func (u userRepo) UpdateUser(context.Context, *biz.User) error {
-	panic("implement me")
+func (u userRepo) Update(ctx context.Context, user *biz.UserDto) error {
+	res := u.data.db.WithContext(ctx).Table(tableUser).Updates(UserDo{
+		Name: user.Name,
+	}).Where("id = ?", user.Id)
+
+	return res.Error
 }
 
-func (u userRepo) DeleteUser(context.Context, int64) error {
-	panic("implement me")
+func (u userRepo) Delete(ctx context.Context, id int) error {
+	res := u.data.db.WithContext(ctx).Table(tableUser).Delete(&UserDo{Id: id})
+	return res.Error
 }
 
-func (u userRepo) GetUser(context.Context, int64) (*biz.User, error) {
-	panic("implement me")
+func (u userRepo) GetById(ctx context.Context, id int) (*biz.UserDo, error) {
+	user := new(UserDo)
+	res := u.data.db.WithContext(ctx).Table(tableUser).First(user).Where("id = ?", id)
+	if res.Error != nil {
+		return nil, res.Error
+	}
+
+	return translateDataBoToBizBo(user), nil
 }
 
-func (u userRepo) ListUser(context.Context, *biz.ListUserDto) ([]*biz.User, error) {
-	panic("implement me")
+func (u userRepo) List(ctx context.Context, filter *biz.ListUserDto) ([]*biz.UserDo, error) {
+	if filter.Rn == 0 || filter.Rn > 20 {
+		filter.Rn = 10
+	}
+
+	bo := make([]*biz.UserDo, 0, filter.Rn)
+
+	users := make([]*UserDo, 0, filter.Rn)
+	res := u.data.db.WithContext(ctx).Table(tableUser).Find(&users).
+		Where("create_time < ?", filter.LastTime).Order("create_time desc").Limit(filter.Rn)
+
+	if res.Error != nil {
+		return bo, res.Error
+	}
+
+	for _, u := range users {
+		bo = append(bo, translateDataBoToBizBo(u))
+	}
+
+	return bo, nil
+}
+
+func translateDataBoToBizBo(do *UserDo) *biz.UserDo {
+	return &biz.UserDo{
+		Id:    do.Id,
+		Name:  do.Name,
+		Phone: do.Phone,
+		Pwd:   do.Password,
+	}
 }

@@ -20,10 +20,31 @@ func NewUserService(uc *biz.UserUsecase, logger log.Logger) *UserService {
 }
 
 func (s *UserService) UserRegister(ctx context.Context, req *pb.UserRegisterRequest) (*pb.BaseResponse, error) {
-	return &pb.BaseResponse{}, nil
+	if err := s.uc.UserRegister(ctx, &biz.UserDto{
+		Name:  req.UserName,
+		Phone: req.Phone,
+		Pwd:   req.Pwd,
+	}); err != nil {
+		return nil, err
+	}
+
+	return &pb.BaseResponse{Message: "success"}, nil
 }
 func (s *UserService) UserLogin(ctx context.Context, req *pb.UserLoginRequest) (*pb.UserLoginResponse, error) {
-	return &pb.UserLoginResponse{}, nil
+	user, err := s.uc.UserLogin(ctx, &biz.UserDto{
+		Phone: req.GetPhone(),
+		Pwd:   req.GetPwd(),
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.UserLoginResponse{
+		Id:    user.Id,
+		Name:  user.Name,
+		Token: user.Token,
+	}, nil
 }
 func (s *UserService) UpdateUser(ctx context.Context, req *pb.UserInfo) (*pb.BaseResponse, error) {
 	return &pb.BaseResponse{}, nil
