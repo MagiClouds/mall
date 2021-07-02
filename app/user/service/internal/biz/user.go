@@ -96,6 +96,11 @@ func (uc *UserUsecase) UpdateUser(ctx context.Context, u *UserDto) error {
 	if err != nil {
 		return err
 	}
+
+	if user.Id == 0 {
+		return fmt.Errorf("user not exist")
+	}
+
 	return uc.repo.Update(ctx, u)
 }
 

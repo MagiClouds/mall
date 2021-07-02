@@ -87,9 +87,9 @@ func (u userRepo) List(ctx context.Context, filter *biz.ListUserDto) ([]*biz.Use
 	bo := make([]*biz.UserDo, 0, filter.Rn)
 
 	users := make([]*UserDo, 0, filter.Rn)
-	res := u.data.db.WithContext(ctx).Table(tableUser).Find(&users).
-		Where("create_time < ?", filter.LastTime).Order("create_time desc").Limit(int(filter.Rn))
-
+	res := u.data.db.WithContext(ctx).Table(tableUser).
+		Where("create_time < ?", filter.LastTime).
+		Order("create_time desc").Limit(int(filter.Rn)).Find(&users)
 	if res.Error != nil {
 		return bo, res.Error
 	}
