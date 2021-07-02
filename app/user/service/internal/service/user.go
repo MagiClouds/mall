@@ -47,14 +47,51 @@ func (s *UserService) UserLogin(ctx context.Context, req *pb.UserLoginRequest) (
 	}, nil
 }
 func (s *UserService) UpdateUser(ctx context.Context, req *pb.UserInfo) (*pb.BaseResponse, error) {
-	return &pb.BaseResponse{}, nil
+	err := s.uc.UpdateUser(ctx, &biz.UserDto{
+		Id:    req.Id,
+		Name:  req.UserName,
+		Phone: req.Phone,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &pb.BaseResponse{Message: "success"}, nil
 }
 func (s *UserService) DeleteUser(ctx context.Context, req *pb.DeleteUserRequest) (*pb.BaseResponse, error) {
-	return &pb.BaseResponse{}, nil
+	if err := s.uc.Delete(ctx, req.Id); err != nil {
+		return nil, err
+	}
+
+	return &pb.BaseResponse{Message: "success"}, nil
 }
 func (s *UserService) GetUser(ctx context.Context, req *pb.GetUserRequest) (*pb.UserInfo, error) {
-	return &pb.UserInfo{}, nil
+	user, err := s.uc.GetUser(ctx, req.Id)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.UserInfo{
+		Id:       user.Id,
+		UserName: user.Name,
+		Phone:    user.Phone,
+	}, nil
 }
 func (s *UserService) ListUser(ctx context.Context, req *pb.ListUserRequest) (*pb.ListUserResponse, error) {
-	return &pb.ListUserResponse{}, nil
+	user, err := s.uc.ListUser(ctx, &biz.ListUserDto{
+		LastTime: req.LastTime,
+		Rn:       req.Rn,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	vo := make([]*pb.UserInfo, 0, len(user))
+	for _, u := range user {
+		vo = append(vo, &pb.UserInfo{
+			Id:       u.Id,
+			UserName: u.Name,
+			Phone:    u.Phone,
+		})
+	}
+
+	return &pb.ListUserResponse{User: vo}, nil
 }

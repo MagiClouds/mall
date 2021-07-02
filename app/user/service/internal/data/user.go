@@ -3,6 +3,7 @@ package data
 import (
 	"context"
 	"github.com/go-kratos/kratos/v2/log"
+	"gorm.io/gorm"
 	"mall/app/user/service/internal/biz"
 )
 
@@ -36,14 +37,14 @@ func (u userRepo) Save(ctx context.Context, user *biz.UserDto) error {
 	return res.Error
 }
 
-//db.Table("orders").Select("date(created_at) as date, sum(amount) as total").Group("date(created_at)").Having("sum(amount) > ?", 100).Scan(&results)
-
 func (u userRepo) GetByPhone(ctx context.Context, phone string) (*biz.UserDo, error) {
 	user := new(UserDo)
-	res := u.data.db.WithContext(ctx).Table(tableUser).First(user).Where(
-		&UserDo{Phone: phone})
+	res := u.data.db.WithContext(ctx).Table(tableUser).First(user, "phone = ?", phone)
 
 	if res.Error != nil {
+		if res.Error == gorm.ErrRecordNotFound {
+			return new(biz.UserDo), nil
+		}
 		return nil, res.Error
 	}
 
@@ -51,21 +52,26 @@ func (u userRepo) GetByPhone(ctx context.Context, phone string) (*biz.UserDo, er
 }
 
 func (u userRepo) Update(ctx context.Context, user *biz.UserDto) error {
-	res := u.data.db.WithContext(ctx).Table(tableUser).Updates(UserDo{
+	res := u.data.db.WithContext(ctx).Where("id = ?", user.Id).Table(tableUser).Updates(UserDo{
 		Name: user.Name,
-	}).Where("id = ?", user.Id)
+	})
 
 	return res.Error
 }
 
-func (u userRepo) Delete(ctx context.Context, id int) error {
+func (u userRepo) Delete(ctx context.Context, id int64) error {
 	res := u.data.db.WithContext(ctx).Table(tableUser).Delete(&UserDo{Id: id})
 	return res.Error
 }
 
-func (u userRepo) GetById(ctx context.Context, id int) (*biz.UserDo, error) {
+func (u userRepo) GetById(ctx context.Context, id int64) (*biz.UserDo, error) {
 	user := new(UserDo)
-	res := u.data.db.WithContext(ctx).Table(tableUser).First(user).Where("id = ?", id)
+	res := u.data.db.WithContext(ctx).Table(tableUser).Where("id = ?", id).First(user)
+
+	if res.Error == gorm.ErrRecordNotFound {
+		return new(biz.UserDo), nil
+	}
+
 	if res.Error != nil {
 		return nil, res.Error
 	}
@@ -82,7 +88,7 @@ func (u userRepo) List(ctx context.Context, filter *biz.ListUserDto) ([]*biz.Use
 
 	users := make([]*UserDo, 0, filter.Rn)
 	res := u.data.db.WithContext(ctx).Table(tableUser).Find(&users).
-		Where("create_time < ?", filter.LastTime).Order("create_time desc").Limit(filter.Rn)
+		Where("create_time < ?", filter.LastTime).Order("create_time desc").Limit(int(filter.Rn))
 
 	if res.Error != nil {
 		return bo, res.Error

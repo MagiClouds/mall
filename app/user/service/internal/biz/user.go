@@ -7,7 +7,7 @@ import (
 )
 
 type UserDto struct {
-	Id    uint64
+	Id    int64
 	Name  string
 	Phone string
 	Pwd   string
@@ -21,28 +21,28 @@ type UserDo struct {
 }
 
 type UserLoginBo struct {
-	Id    uint64
+	Id    int64
 	Name  string
 	Token string
 }
 
 type UserBo struct {
-	Id    uint64
+	Id    int64
 	Name  string
 	Phone string
 }
 
 type ListUserDto struct {
-	LastTime int64
-	Rn       int
+	LastTime uint64
+	Rn       uint32
 }
 
 type UserRepo interface {
 	Save(context.Context, *UserDto) error
 	GetByPhone(context.Context, string) (*UserDo, error)
 	Update(context.Context, *UserDto) error
-	Delete(context.Context, int) error
-	GetById(context.Context, int) (*UserDo, error)
+	Delete(context.Context, int64) error
+	GetById(context.Context, int64) (*UserDo, error)
 	List(context.Context, *ListUserDto) ([]*UserDo, error)
 }
 
@@ -92,14 +92,18 @@ func (uc *UserUsecase) UserLogin(ctx context.Context, g *UserDto) (*UserLoginBo,
 }
 
 func (uc *UserUsecase) UpdateUser(ctx context.Context, u *UserDto) error {
+	user, err := uc.repo.GetById(ctx, u.Id)
+	if err != nil {
+		return err
+	}
 	return uc.repo.Update(ctx, u)
 }
 
-func (uc *UserUsecase) Delete(ctx context.Context, id int) error {
+func (uc *UserUsecase) Delete(ctx context.Context, id int64) error {
 	return uc.repo.Delete(ctx, id)
 }
 
-func (uc *UserUsecase) GetUser(ctx context.Context, id int) (*UserBo, error) {
+func (uc *UserUsecase) GetUser(ctx context.Context, id int64) (*UserBo, error) {
 	user, err := uc.repo.GetById(ctx, id)
 	if err != nil {
 		return nil, err
