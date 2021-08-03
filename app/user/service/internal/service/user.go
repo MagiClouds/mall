@@ -5,7 +5,7 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"mall/app/user/service/internal/biz"
 
-	pb "mall/api/user/v1"
+	pb "mall/api/user/service/v1"
 )
 
 type UserService struct {

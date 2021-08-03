@@ -1,9 +1,6 @@
 package server
 
 import (
-	v1 "mall/api/user/v1"
-	"mall/app/user/service/internal/conf"
-	"mall/app/user/service/internal/service"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/logging"
 	"github.com/go-kratos/kratos/v2/middleware/metrics"
@@ -11,6 +8,9 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/middleware/validate"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
+	v1 "mall/api/user/service/v1"
+	"mall/app/user/service/internal/conf"
+	"mall/app/user/service/internal/service"
 )
 
 // NewGRPCServer new a gRPC server.
