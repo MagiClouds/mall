@@ -15,10 +15,27 @@ service Product {
           body: "*"
         };
     };
-    rpc UpdateProduct (UpdateProductRequest) returns (UpdateProductReply);
-    rpc DeleteProduct (DeleteProductRequest) returns (DeleteProductReply);
-    rpc GetProduct (GetProductRequest) returns (GetProductReply);
-    rpc ListProduct (ListProductRequest) returns (ListProductReply);
+    rpc UpdateProduct (UpdateProductRequest) returns (UpdateProductReply){
+        option (google.api.http) = {
+            put: "/product"
+            body: "*"
+        };
+    };
+    rpc DeleteProduct (DeleteProductRequest) returns (DeleteProductReply){
+        option (google.api.http) = {
+          delete: "/product/{id}"
+        };
+    };
+    rpc GetProduct (GetProductRequest) returns (GetProductReply){
+        option (google.api.http) = {
+          get: "/product/{id}"
+        };
+    };
+    rpc ListProduct (ListProductRequest) returns (ListProductReply){
+        option (google.api.http) = {
+          get: "/product"
+        };
+    };
 }
 
 message CreateProductRequest {
@@ -58,15 +75,41 @@ message CreateProductReply {
 }
 
 message UpdateProductRequest {
-
+    int64 id = 1;
+    string name = 2;
+    string sku = 3;
+    int64 price = 4;
+    string description = 5;
+    repeated Image image = 6;
+    repeated Size size = 7;
+    Seo seo = 8;
 }
-message UpdateProductReply {}
+message UpdateProductReply {
+    int64 id = 1;
+}
 
-message DeleteProductRequest {}
-message DeleteProductReply {}
+message DeleteProductRequest {
+    int64 id = 1;
+}
+message DeleteProductReply {
+    string message = 1;
+}
 
-message GetProductRequest {}
-message GetProductReply {}
+message GetProductRequest {
+    int64 id = 1;
+}
+message GetProductReply {
+    int64 id = 1;
+    string name = 2;
+    string sku = 3;
+    int64 price = 4;
+    string description = 5;
+    repeated Image image = 6;
+    repeated Size size = 7;
+    Seo seo =  8;
+}
 
 message ListProductRequest {}
-message ListProductReply {}
+message ListProductReply {
+    repeated GetProductReply product = 1;
+}
