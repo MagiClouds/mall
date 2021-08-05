@@ -1,7 +1,7 @@
 package service
 
 import (
-    "context"
+	"context"
 	"github.com/go-kratos/kratos/v2/log"
 	"mall/app/product/service/internal/biz"
 
@@ -11,14 +11,15 @@ import (
 type ProductService struct {
 	pb.UnimplementedProductServer
 
-	uc  *biz.ProductUsecase
+	puc *biz.ProductUsecase
 	log *log.Helper
 }
 
 func NewProductService(uc *biz.ProductUsecase, logger log.Logger) *ProductService {
 	return &ProductService{
-		uc:                         uc,
-		log:                        log.NewHelper(logger),
+		puc: uc,
+
+		log: log.NewHelper(logger),
 	}
 }
 

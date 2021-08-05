@@ -19,10 +19,23 @@ func NewProductRepo(data *Data, logger log.Logger) biz.ProductRepo {
 	}
 }
 
-func (r *productRepo) CreateProduct(ctx context.Context, g *biz.Product) error {
-	return nil
+func (p productRepo) CreateProduct(context.Context, *biz.ProductDo) error {
+	panic("implement me")
 }
 
-func (r *productRepo) UpdateProduct(ctx context.Context, g *biz.Product) error {
-	return nil
+func (p productRepo) UpdateProduct(context.Context, *biz.ProductDo) error {
+	panic("implement me")
 }
+
+func (p productRepo) DeleteProduct(context.Context, int64) error {
+	panic("implement me")
+}
+
+func (p productRepo) GetProduct(context.Context, int64) *biz.ProductDo {
+	panic("implement me")
+}
+
+func (p productRepo) ListProduct(context.Context) []*biz.ProductDo {
+	panic("implement me")
+}
+

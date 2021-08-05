@@ -24,7 +24,10 @@ func initApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*
 		return nil, nil, err
 	}
 	productRepo := data.NewProductRepo(dataData, logger)
-	productUsecase := biz.NewProductUsecase(productRepo, logger)
+	imageRepo := data.NewImageRepo(dataData, logger)
+	sizeRepo := data.NewSizeRepo(dataData, logger)
+	seoRepo := data.NewSeoRepo(dataData, logger)
+	productUsecase := biz.NewProductUsecase(productRepo, imageRepo, sizeRepo, seoRepo, logger)
 	productService := service.NewProductService(productUsecase, logger)
 	httpServer := server.NewHTTPServer(confServer, productService, logger)
 	grpcServer := server.NewGRPCServer(confServer, productService, logger)
