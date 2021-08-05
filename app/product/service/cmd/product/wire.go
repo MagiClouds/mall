@@ -6,15 +6,16 @@ package main
 
 import (
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/go-kratos/kratos/v2"
 	"github.com/google/wire"
-	"product/internal/biz"
-	"product/internal/conf"
-	"product/internal/data"
-	"product/internal/server"
-	"product/internal/service"
+	"mall/app/product/service/internal/biz"
+	"mall/app/product/service/internal/conf"
+	"mall/app/product/service/internal/data"
+	"mall/app/product/service/internal/server"
+	"mall/app/product/service/internal/service"
 )
 
 // initApp init kratos application.
 func initApp(*conf.Server, *conf.Data, log.Logger) (*kratos.App, func(), error) {
-	panic(wire.Build(server.ProviderSet, data.ProviderSet, biz.ProviderSet, service.ProviderSet, newApp))
+	panic(wire.Build(server.ServerProviderSet, data.DataProviderSet, biz.BizProviderSet, service.ServiceProviderSet, newApp))
 }
