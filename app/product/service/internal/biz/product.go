@@ -153,4 +153,5 @@ func (uc *ProductUsecase) List(ctx context.Context) ([]*ProductBo, error) {
 			Seo:         ProductSeo{},
 		})
 	}
+	return bo, nil
 }
