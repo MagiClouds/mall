@@ -8,7 +8,7 @@ import (
 type ProductDo struct {
 	Id          int64
 	Name        string
-	Sku         string //单独建表，关联价格相关参数
+	Sku         string  //单独建表，关联价格相关参数
 	Price       int64
 	Description string
 }
@@ -93,11 +93,23 @@ func NewProductUsecase(productRepo ProductRepo, imageRepo ImageRepo, sizeRepo Si
 }
 
 func (uc *ProductUsecase) Create(ctx context.Context, g *ProductBo) (int64, error) {
-	return uc.productRepo.CreateProduct(ctx, g)
+	//todo 事物
+	return uc.productRepo.CreateProduct(ctx, &ProductDo{
+		Name:        g.Name,
+		Sku:         g.Sku,
+		Price:       g.Price,
+		Description: g.Description,
+	})
 }
 
 func (uc *ProductUsecase) Update(ctx context.Context, g *ProductBo) (int64, error) {
-	return uc.productRepo.UpdateProduct(ctx, g)
+	return uc.productRepo.UpdateProduct(ctx, &ProductDo{
+		Id:          g.Id,
+		Name:        g.Name,
+		Sku:         g.Sku,
+		Price:       g.Price,
+		Description: g.Description,
+	})
 }
 
 func (uc *ProductUsecase) Delete(ctx context.Context, id int64) error {
