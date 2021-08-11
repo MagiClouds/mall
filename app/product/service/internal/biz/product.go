@@ -14,18 +14,18 @@ type ProductDo struct {
 }
 
 type ProductRepo interface {
-	CreateProduct(context.Context, *ProductDo) error
-	UpdateProduct(context.Context, *ProductDo) error
+	CreateProduct(context.Context, *ProductDo) (int64, error)
+	UpdateProduct(context.Context, *ProductDo) (int64, error)
 	DeleteProduct(context.Context, int64) error
-	GetProduct(context.Context, int64) *ProductDo
-	ListProduct(context.Context) []*ProductDo
+	GetProduct(context.Context, int64) (*ProductDo, error)
+	ListProduct(context.Context) ([]*ProductDo, error)
 }
 
 type ProductImage struct {
 	Id        int64
 	ProductId int64
 	Name      string
-	code      string
+	Code      string
 	Url       string
 }
 
@@ -92,22 +92,53 @@ func NewProductUsecase(productRepo ProductRepo, imageRepo ImageRepo, sizeRepo Si
 	}
 }
 
-func (uc *ProductUsecase) Create(ctx context.Context, g *ProductBo) error {
+func (uc *ProductUsecase) Create(ctx context.Context, g *ProductBo) (int64, error) {
 	return uc.productRepo.CreateProduct(ctx, g)
 }
 
-func (uc *ProductUsecase) Update(ctx context.Context, g *ProductBo) error {
+func (uc *ProductUsecase) Update(ctx context.Context, g *ProductBo) (int64, error) {
 	return uc.productRepo.UpdateProduct(ctx, g)
 }
 
-func (uc *ProductUsecase) Delete(ctx context.Context, g *ProductBo) error {
-	return uc.productRepo.UpdateProduct(ctx, g)
+func (uc *ProductUsecase) Delete(ctx context.Context, id int64) error {
+	return uc.productRepo.DeleteProduct(ctx, id)
 }
 
-func (uc *ProductUsecase) Get(ctx context.Context, g *ProductBo) error {
-	return uc.productRepo.UpdateProduct(ctx, g)
+func (uc *ProductUsecase) Get(ctx context.Context, id int64) (*ProductBo, error) {
+	product, err := uc.productRepo.GetProduct(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	return &ProductBo{
+		Id:          product.Id,
+		Name:        product.Name,
+		Sku:         "",
+		Price:       0,
+		Description: "",
+		Image:       nil,
+		Size:        nil,
+		Seo:         ProductSeo{},
+	}, nil
 }
 
-func (uc *ProductUsecase) List(ctx context.Context, g *ProductBo) error {
-	return uc.productRepo.UpdateProduct(ctx, g)
+func (uc *ProductUsecase) List(ctx context.Context) ([]*ProductBo, error) {
+	product, err := uc.productRepo.ListProduct(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	bo := make([]*ProductBo, 0, len(product))
+	for _, p := range product {
+		bo = append(bo, &ProductBo{
+			Id:          p.Id,
+			Name:        p.Name,
+			Sku:         "",
+			Price:       0,
+			Description: "",
+			Image:       nil,
+			Size:        nil,
+			Seo:         ProductSeo{},
+		})
+	}
 }
