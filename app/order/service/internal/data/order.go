@@ -27,23 +27,22 @@ func NewOrderRepo(data *Data, logger log.Logger) biz.OrderRepo {
 
 func (r *orderRepo) CreateOrder(ctx context.Context, g *biz.OrderBo) error {
 	return r.data.db.Transaction(func(tx *gorm.DB) error {
-		if err := InsertOrder(ctx, tx, &OrderDo{
-			Id:         g.Id,
+		id, err := InsertOrder(ctx, tx, &OrderDo{
 			PayStatus:  g.PayStatus,
 			ShipStatus: g.ShipStatus,
 			Price:      g.Price,
-		}); err != nil {
+		})
+		if err != nil {
 			return err
 		}
 		details := make([]*OrderDetail, 0, len(g.OrderDetail))
 		for _, d := range g.OrderDetail {
 			details = append(details, &OrderDetail{
-				Id:            d.Id,
 				ProductId:     d.ProductId,
 				ProductNum:    d.ProductNum,
 				ProductSizeId: d.ProductSizeId,
 				ProductPrice:  d.ProductPrice,
-				OrderId:       g.Id,
+				OrderId:       id,
 			})
 		}
 
@@ -61,8 +60,9 @@ type OrderDo struct {
 	Price      int64 `gorm:"column:price"`
 }
 
-func InsertOrder(ctx context.Context, db *gorm.DB, data *OrderDo) error {
-	return db.WithContext(ctx).Table(tableOrder).Create(data).Error
+func InsertOrder(ctx context.Context, db *gorm.DB, data *OrderDo) (int64, error) {
+	err := db.WithContext(ctx).Table(tableOrder).Create(data).Error
+	return data.Id, err
 }
 
 type OrderDetail struct {
