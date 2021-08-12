@@ -9,9 +9,19 @@ type Cart struct {
 	Hello string
 }
 
+type Item struct {
+	userId    int64
+	IterId    int64
+	ChangeNum int64
+}
+
 type CartRepo interface {
-	CreateCart(context.Context, *Cart) error
-	UpdateCart(context.Context, *Cart) error
+	AddCart(context.Context, *Cart) error
+	IncrItem(context.Context, *Item) error
+	DecrItem(context.Context, *Item) error
+	DeleteItemById(context.Context, *Item) error
+	CleanCart(context.Context, int64) error
+	GetCart(context.Context, int64) []*Cart
 }
 
 type CartUsecase struct {
@@ -24,9 +34,9 @@ func NewCartUsecase(repo CartRepo, logger log.Logger) *CartUsecase {
 }
 
 func (uc *CartUsecase) Create(ctx context.Context, g *Cart) error {
-	return uc.repo.CreateCart(ctx, g)
+	return uc.repo.AddCart(ctx, g)
 }
 
-func (uc *CartUsecase) Update(ctx context.Context, g *Cart) error {
-	return uc.repo.UpdateCart(ctx, g)
+func (uc *CartUsecase) CleanCart(ctx context.Context, id int64) error {
+	return uc.repo.CleanCart(ctx, id)
 }

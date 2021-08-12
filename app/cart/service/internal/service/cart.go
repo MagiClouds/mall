@@ -1,28 +1,20 @@
 package service
 
 import (
-	"context"
-	"github.com/go-kratos/kratos/v2/log"
-	"mall/app/cart/service/internal/biz"
+    "context"
 
-	pb "mall/api/cart/sevrice/v1"
+    pb "mall/api/cart/sevrice/v1"
 )
 
 type CartService struct {
 	pb.UnimplementedCartServer
-
-	uc  *biz.CartUsecase
-	log *log.Helper
 }
 
-func NewCartService(uc *biz.CartUsecase, logger log.Logger) *CartService {
-	return &CartService{
-		uc:                      uc,
-		log:                     log.NewHelper(logger),
-	}
+func NewCartService() *CartService {
+	return &CartService{}
 }
 
-func (s *CartService) CreateCart(ctx context.Context, req *pb.CreateCartRequest) (*pb.CreateCartReply, error) {
+func (s *CartService) AddCart(ctx context.Context, req *pb.CreateCartRequest) (*pb.CreateCartReply, error) {
 	return &pb.CreateCartReply{}, nil
 }
 func (s *CartService) IncrItem(ctx context.Context, req *pb.IncrItemRequest) (*pb.IncrItemReply, error) {

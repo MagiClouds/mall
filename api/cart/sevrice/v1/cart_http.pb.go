@@ -18,23 +18,23 @@ var _ = binding.EncodeURL
 const _ = http.SupportPackageIsVersion1
 
 type CartHTTPServer interface {
-	CreateCart(context.Context, *CreateCartRequest) (*CreateCartReply, error)
+	AddCart(context.Context, *CreateCartRequest) (*CreateCartReply, error)
 }
 
 func RegisterCartHTTPServer(s *http.Server, srv CartHTTPServer) {
 	r := s.Route("/")
-	r.POST("/cart", _Cart_CreateCart0_HTTP_Handler(srv))
+	r.POST("/cart", _Cart_AddCart0_HTTP_Handler(srv))
 }
 
-func _Cart_CreateCart0_HTTP_Handler(srv CartHTTPServer) func(ctx http.Context) error {
+func _Cart_AddCart0_HTTP_Handler(srv CartHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in CreateCartRequest
 		if err := ctx.Bind(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, "/api.cart.sevrice.v1.Cart/CreateCart")
+		http.SetOperation(ctx, "/api.cart.sevrice.v1.Cart/AddCart")
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.CreateCart(ctx, req.(*CreateCartRequest))
+			return srv.AddCart(ctx, req.(*CreateCartRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
@@ -46,7 +46,7 @@ func _Cart_CreateCart0_HTTP_Handler(srv CartHTTPServer) func(ctx http.Context) e
 }
 
 type CartHTTPClient interface {
-	CreateCart(ctx context.Context, req *CreateCartRequest, opts ...http.CallOption) (rsp *CreateCartReply, err error)
+	AddCart(ctx context.Context, req *CreateCartRequest, opts ...http.CallOption) (rsp *CreateCartReply, err error)
 }
 
 type CartHTTPClientImpl struct {
@@ -57,11 +57,11 @@ func NewCartHTTPClient(client *http.Client) CartHTTPClient {
 	return &CartHTTPClientImpl{client}
 }
 
-func (c *CartHTTPClientImpl) CreateCart(ctx context.Context, in *CreateCartRequest, opts ...http.CallOption) (*CreateCartReply, error) {
+func (c *CartHTTPClientImpl) AddCart(ctx context.Context, in *CreateCartRequest, opts ...http.CallOption) (*CreateCartReply, error) {
 	var out CreateCartReply
 	pattern := "/cart"
 	path := binding.EncodeURL(pattern, in, false)
-	opts = append(opts, http.Operation("/api.cart.sevrice.v1.Cart/CreateCart"))
+	opts = append(opts, http.Operation("/api.cart.sevrice.v1.Cart/AddCart"))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {

@@ -9,7 +9,7 @@ option java_multiple_files = true;
 option java_package = "api.cart.sevrice.v1";
 
 service Cart {
-  rpc CreateCart (CreateCartRequest) returns (CreateCartReply) {
+  rpc AddCart (CreateCartRequest) returns (CreateCartReply) {
     option (google.api.http) = {
       post: "/cart",
       body: "*",

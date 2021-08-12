@@ -1,9 +1,9 @@
 package data
 
 import (
-	"mall/app/cart/service/internal/biz"
 	"context"
 	"github.com/go-kratos/kratos/v2/log"
+	"mall/app/cart/service/internal/biz"
 )
 
 type cartRepo struct {
@@ -19,10 +19,26 @@ func NewCartRepo(data *Data, logger log.Logger) biz.CartRepo {
 	}
 }
 
-func (r *cartRepo) CreateCart(ctx context.Context, g *biz.Cart) error {
-	return nil
+func (r *cartRepo) AddCart(context.Context, *biz.Cart) error {
+	panic("implement me")
 }
 
-func (r *cartRepo) UpdateCart(ctx context.Context, g *biz.Cart) error {
-	return nil
+func (r *cartRepo) IncrItem(context.Context, *biz.Item) error {
+	panic("implement me")
+}
+
+func (r *cartRepo) DecrItem(context.Context, *biz.Item) error {
+	panic("implement me")
+}
+
+func (r *cartRepo) DeleteItemById(context.Context, *biz.Item) error {
+	panic("implement me")
+}
+
+func (r *cartRepo) CleanCart(context.Context, int64) error {
+	panic("implement me")
+}
+
+func (r *cartRepo) GetCart(context.Context, int64) []*biz.Cart {
+	panic("implement me")
 }

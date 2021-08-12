@@ -18,7 +18,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CartClient interface {
-	CreateCart(ctx context.Context, in *CreateCartRequest, opts ...grpc.CallOption) (*CreateCartReply, error)
+	AddCart(ctx context.Context, in *CreateCartRequest, opts ...grpc.CallOption) (*CreateCartReply, error)
 	IncrItem(ctx context.Context, in *IncrItemRequest, opts ...grpc.CallOption) (*IncrItemReply, error)
 	DecrItem(ctx context.Context, in *DecrItemRequest, opts ...grpc.CallOption) (*DecrItemReply, error)
 	DeleteItemById(ctx context.Context, in *DeleteCartItemRequest, opts ...grpc.CallOption) (*DeleteCartItemReply, error)
@@ -34,9 +34,9 @@ func NewCartClient(cc grpc.ClientConnInterface) CartClient {
 	return &cartClient{cc}
 }
 
-func (c *cartClient) CreateCart(ctx context.Context, in *CreateCartRequest, opts ...grpc.CallOption) (*CreateCartReply, error) {
+func (c *cartClient) AddCart(ctx context.Context, in *CreateCartRequest, opts ...grpc.CallOption) (*CreateCartReply, error) {
 	out := new(CreateCartReply)
-	err := c.cc.Invoke(ctx, "/api.cart.sevrice.v1.Cart/CreateCart", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.cart.sevrice.v1.Cart/AddCart", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -92,7 +92,7 @@ func (c *cartClient) GetCart(ctx context.Context, in *GetCartRequest, opts ...gr
 // All implementations must embed UnimplementedCartServer
 // for forward compatibility
 type CartServer interface {
-	CreateCart(context.Context, *CreateCartRequest) (*CreateCartReply, error)
+	AddCart(context.Context, *CreateCartRequest) (*CreateCartReply, error)
 	IncrItem(context.Context, *IncrItemRequest) (*IncrItemReply, error)
 	DecrItem(context.Context, *DecrItemRequest) (*DecrItemReply, error)
 	DeleteItemById(context.Context, *DeleteCartItemRequest) (*DeleteCartItemReply, error)
@@ -105,8 +105,8 @@ type CartServer interface {
 type UnimplementedCartServer struct {
 }
 
-func (UnimplementedCartServer) CreateCart(context.Context, *CreateCartRequest) (*CreateCartReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateCart not implemented")
+func (UnimplementedCartServer) AddCart(context.Context, *CreateCartRequest) (*CreateCartReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddCart not implemented")
 }
 func (UnimplementedCartServer) IncrItem(context.Context, *IncrItemRequest) (*IncrItemReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method IncrItem not implemented")
@@ -136,20 +136,20 @@ func RegisterCartServer(s grpc.ServiceRegistrar, srv CartServer) {
 	s.RegisterService(&Cart_ServiceDesc, srv)
 }
 
-func _Cart_CreateCart_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Cart_AddCart_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateCartRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CartServer).CreateCart(ctx, in)
+		return srv.(CartServer).AddCart(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.cart.sevrice.v1.Cart/CreateCart",
+		FullMethod: "/api.cart.sevrice.v1.Cart/AddCart",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CartServer).CreateCart(ctx, req.(*CreateCartRequest))
+		return srv.(CartServer).AddCart(ctx, req.(*CreateCartRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -252,8 +252,8 @@ var Cart_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*CartServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "CreateCart",
-			Handler:    _Cart_CreateCart_Handler,
+			MethodName: "AddCart",
+			Handler:    _Cart_AddCart_Handler,
 		},
 		{
 			MethodName: "IncrItem",
