@@ -6,10 +6,6 @@ import (
 )
 
 type OrderBo struct {
-	Hello string
-}
-
-type OrderDo struct {
 	Id          int64
 	PayStatus   int64
 	ShipStatus  int64
@@ -27,13 +23,13 @@ type OrderDetail struct {
 }
 
 type OrderRepo interface {
-	CreateOrder(context.Context, *OrderDo) error
-	UpdateOrder(context.Context, *OrderDo) error
-	GetOrder(context.Context, int64) (*OrderDo, error)
+	CreateOrder(context.Context, *OrderBo) error
+	UpdateOrder(context.Context, *OrderBo) error
+	GetOrder(context.Context, int64) (*OrderBo, error)
 	DeleteOrder(context.Context, int64) error
-	ListOrder(context.Context) ([]*OrderDo, error)
-	UpdateOrderPayStatus(context.Context, *OrderDo) error
-	UpdateOrderShipStatus(context.Context, *OrderDo) error
+	ListOrder(context.Context) ([]*OrderBo, error)
+	UpdateOrderPayStatus(context.Context, *OrderBo) error
+	UpdateOrderShipStatus(context.Context, *OrderBo) error
 }
 
 type OrderUsecase struct {
@@ -45,15 +41,15 @@ func NewOrderUsecase(repo OrderRepo, logger log.Logger) *OrderUsecase {
 	return &OrderUsecase{repo: repo, log: log.NewHelper(logger)}
 }
 
-func (uc *OrderUsecase) CreateOrder(ctx context.Context, g *OrderDo) error {
+func (uc *OrderUsecase) CreateOrder(ctx context.Context, g *OrderBo) error {
 	return uc.repo.CreateOrder(ctx, g)
 }
 
-func (uc *OrderUsecase) UpdateOrder(ctx context.Context, g *OrderDo) error {
+func (uc *OrderUsecase) UpdateOrder(ctx context.Context, g *OrderBo) error {
 	return uc.repo.UpdateOrder(ctx, g)
 }
 
-func (uc *OrderUsecase) GetOrder(ctx context.Context, id int64) (*OrderDo, error) {
+func (uc *OrderUsecase) GetOrder(ctx context.Context, id int64) (*OrderBo, error) {
 	return uc.repo.GetOrder(ctx, id)
 }
 
@@ -61,14 +57,14 @@ func (uc *OrderUsecase) DeleteOrder(ctx context.Context, id int64) error {
 	return uc.repo.DeleteOrder(ctx, id)
 }
 
-func (uc *OrderUsecase) ListOrder(ctx context.Context) ([]*OrderDo, error) {
+func (uc *OrderUsecase) ListOrder(ctx context.Context) ([]*OrderBo, error) {
 	return uc.repo.ListOrder(ctx)
 }
 
-func (uc *OrderUsecase) UpdateOrderPayStatus(ctx context.Context, g *OrderDo) error {
+func (uc *OrderUsecase) UpdateOrderPayStatus(ctx context.Context, g *OrderBo) error {
 	return uc.repo.UpdateOrder(ctx, g)
 }
 
-func (uc *OrderUsecase) UpdateOrderShipStatus(ctx context.Context, g *OrderDo) error {
+func (uc *OrderUsecase) UpdateOrderShipStatus(ctx context.Context, g *OrderBo) error {
 	return uc.repo.UpdateOrder(ctx, g)
 }
