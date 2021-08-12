@@ -1,0 +1,82 @@
+syntax = "proto3";
+
+package api.cart.sevrice.v1;
+
+import "google/api/annotations.proto";
+
+option go_package = "mall/api/cart/sevrice/v1;v1";
+option java_multiple_files = true;
+option java_package = "api.cart.sevrice.v1";
+
+service Cart {
+  rpc CreateCart (CreateCartRequest) returns (CreateCartReply) {
+    option (google.api.http) = {
+      post: "/cart",
+      body: "*",
+    };
+  };
+  rpc IncrItem(IncrItemRequest) returns (IncrItemReply);
+  rpc DecrItem(DecrItemRequest) returns (DecrItemReply);
+  rpc DeleteItemById (DeleteCartItemRequest) returns (DeleteCartItemReply);
+  rpc CleanCart (CleanCartRequest) returns (CleanCartReply);
+  rpc GetCart (GetCartRequest) returns (GetCartReply);
+}
+
+message DeleteCartItemRequest {
+    int64 user_id = 1;
+    int64 item_id = 2;
+}
+message DeleteCartItemReply {
+    string message = 1;
+}
+
+message DecrItemRequest {
+  int64 user_id = 1;
+  int64 item_id = 2;
+  int64 change_num = 3;
+}
+
+message DecrItemReply {
+  string message = 1;
+}
+
+message IncrItemRequest {
+  int64 user_id = 1;
+  int64 item_id = 2;
+  int64 change_num = 3;
+}
+
+message IncrItemReply {
+  string message = 1;
+}
+
+message CreateCartRequest {
+  int64 id = 1;
+  int64 user_id = 2;
+  int64 product_id = 3;
+  int64 size_id = 4;
+  int64 num = 5;
+}
+message CreateCartReply {
+    string message = 1;
+}
+
+message CleanCartRequest {
+    int64 id = 1;
+}
+message CleanCartReply {
+    string message = 1;
+}
+
+message GetCartRequest {
+    int64 id = 1;
+}
+message GetCartReply {
+    message Cart {
+        int64 id = 1;
+        int64 product_id = 2;
+        int64 size_id = 3;
+        int64 num = 4;
+    }
+    repeated Cart cart = 1;
+}
