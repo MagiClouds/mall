@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/go-kratos/kratos/v2/log"
+	v1 "mall/api/user/service/v1"
 )
 
 type UserDto struct {
@@ -55,6 +56,12 @@ func NewUserUsecase(repo UserRepo, logger log.Logger) *UserUsecase {
 	return &UserUsecase{repo: repo, log: log.NewHelper(logger)}
 }
 
+//protoc --proto_path=. \
+//--proto_path=./third_party \
+//--go_out=paths=source_relative:. \
+//--go-errors_out=paths=source_relative:. \
+//$(API_PROTO_FILES)
+
 func (uc *UserUsecase) UserRegister(ctx context.Context, u *UserDto) error {
 	user, err := uc.repo.GetByPhone(ctx, u.Phone)
 	if err != nil {
@@ -62,7 +69,7 @@ func (uc *UserUsecase) UserRegister(ctx context.Context, u *UserDto) error {
 	}
 
 	if user.Id != 0 {
-		return fmt.Errorf("user already exists")
+		return v1.ErrorContentAlreadyExits("user already exist")
 	}
 
 	return uc.repo.Save(ctx, u)
