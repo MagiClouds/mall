@@ -12,13 +12,19 @@ import (
 // ProviderSet is server providers.
 var ProviderSet = wire.NewSet(NewHTTPServer, NewGRPCServer, NewRegistrar)
 
-func NewRegistrar(conf *conf.Registry) registry.Registrar {
+func NewRegistrar(conf *conf.Registry) (registry.Registrar, func(), error) {
 	client, err := clientv3.New(clientv3.Config{Endpoints: conf.Etcd.Endpoint,
 		DialTimeout: conf.Etcd.Timeout.AsDuration(), DialOptions: []grpc.DialOption{grpc.WithBlock()}})
 	if err != nil {
-		panic(err)
+		return nil, nil, err
+	}
+
+	cleanup := func() {
+		client.Close()
 	}
 
 	r := etcd.New(client)
-	return r
+	return r, func() {
+		cleanup()
+	}, nil
 }

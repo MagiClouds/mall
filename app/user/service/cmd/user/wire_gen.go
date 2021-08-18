@@ -28,9 +28,14 @@ func initApp(confServer *conf.Server, confData *conf.Data, logger log.Logger, re
 	userService := service.NewUserService(userUsecase, logger)
 	httpServer := server.NewHTTPServer(confServer, userService, logger)
 	grpcServer := server.NewGRPCServer(confServer, userService, logger)
-	registrar := server.NewRegistrar(registry)
+	registrar, cleanup2, err := server.NewRegistrar(registry)
+	if err != nil {
+		cleanup()
+		return nil, nil, err
+	}
 	app := newApp(logger, httpServer, grpcServer, registrar)
 	return app, func() {
+		cleanup2()
 		cleanup()
 	}, nil
 }
