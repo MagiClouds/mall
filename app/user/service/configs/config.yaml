@@ -4,7 +4,7 @@ server:
     timeout: 1s
   grpc:
     addr: 0.0.0.0:9000
-    timeout: 1000s
+    timeout: 0.1s
 data:
   database:
     driver: mysql
@@ -17,5 +17,5 @@ registry:
   etcd:
     endpoint:
       - 127.0.0.1:2379
-    timeout: 10s
+    timeout: 1s
 

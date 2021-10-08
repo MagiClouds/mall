@@ -11,8 +11,8 @@ import (
 var _ log.Logger = (*ZapLogger)(nil)
 
 type ZapLogger struct {
-	log  *zap.Logger
-	Sync func() error
+	Logger *zap.Logger
+	Sync   func() error
 }
 
 // NewZapLogger return ZapLogger
@@ -23,13 +23,13 @@ func NewZapLogger(encoder zapcore.EncoderConfig, level zap.AtomicLevel, opts ...
 			zapcore.AddSync(os.Stdout),
 		), level)
 	zapLogger := zap.New(core, opts...)
-	return &ZapLogger{log: zapLogger, Sync: zapLogger.Sync}
+	return &ZapLogger{Logger: zapLogger, Sync: zapLogger.Sync}
 }
 
 // Log Implementation of logger interface
 func (l *ZapLogger) Log(level log.Level, keyvals ...interface{}) error {
 	if len(keyvals) == 0 || len(keyvals)%2 != 0 {
-		l.log.Warn(fmt.Sprint("Keyvalues must appear in pairs: ", keyvals))
+		l.Logger.Warn(fmt.Sprint("Keyvalues must appear in pairs: ", keyvals))
 		return nil
 	}
 
@@ -40,13 +40,22 @@ func (l *ZapLogger) Log(level log.Level, keyvals ...interface{}) error {
 	}
 	switch level {
 	case log.LevelDebug:
-		l.log.Debug("", data...)
+		l.Logger.Debug("", data...)
 	case log.LevelInfo:
-		l.log.Info("", data...)
+		l.Logger.Info("", data...)
 	case log.LevelWarn:
-		l.log.Warn("", data...)
+		l.Logger.Warn("", data...)
 	case log.LevelError:
-		l.log.Error("", data...)
+		l.Logger.Error("", data...)
 	}
 	return nil
+}
+
+func GetEncoder() zapcore.Encoder {
+	return zapcore.NewJSONEncoder(zap.NewProductionEncoderConfig())
+}
+
+func GetLogWriter() zapcore.WriteSyncer {
+	file, _ := os.Create("./test.log")
+	return zapcore.AddSync(file)
 }

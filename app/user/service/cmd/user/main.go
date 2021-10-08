@@ -3,6 +3,9 @@ package main
 import (
 	"flag"
 	"github.com/go-kratos/kratos/v2/registry"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
+	logger2 "mall/pkg/logger"
 	"os"
 
 	"github.com/go-kratos/kratos/v2"
@@ -47,14 +50,22 @@ func newApp(logger log.Logger, hs *http.Server, gs *grpc.Server, rr registry.Reg
 
 func main() {
 	flag.Parse()
-	logger := log.With(log.NewStdLogger(os.Stdout),
-		"ts", log.DefaultTimestamp,
-		"caller", log.DefaultCaller,
-		"service.id", id,
-		"service.name", Name,
-		"service.version", Version,
-		"trace_id", log.TraceID(),
-		"span_id", log.SpanID(),
+	zapLogger := logger2.NewZapLogger(zap.NewProductionEncoderConfig(), zap.NewAtomicLevel())
+	zapLogger.Logger = zapLogger.Logger.With(
+		zapcore.Field{
+			Key:       id,
+			Type:      zapcore.NamespaceType,
+			Integer:   1,
+			String:    Name,
+			Interface: Name,
+		},
+		zapcore.Field{
+			Key:       Name,
+			Type:      zapcore.NamespaceType,
+			Integer:   1,
+			String:    Name,
+			Interface: Name,
+		},
 	)
 	c := config.New(
 		config.WithSource(
@@ -70,7 +81,7 @@ func main() {
 		panic(err)
 	}
 
-	app, cleanup, err := initApp(bc.Server, bc.Data, logger, bc.Registry)
+	app, cleanup, err := initApp(bc.Server, bc.Data, zapLogger, bc.Registry)
 	if err != nil {
 		panic(err)
 	}
