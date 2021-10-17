@@ -10,7 +10,7 @@ golang-micro kratos go-zero
 下单（限流（令牌 漏斗 分布式限流）、秒杀、分布式锁， 分布式id）
 支付（分布式事物）： 扣钱，清空购物车，更改订单状态，增加用户商品
 
-商品搜索（mqsql-dump + cdc + es）
+商品搜索（mysql-dump + cdc + kafka + es)
 
 ci/cd
 
